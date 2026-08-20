@@ -1,5 +1,5 @@
 import { sql } from "../database/db";
-import type { Book, CreateBookDto, UpdateBookDto } from "@models/book.model";
+import type { Book, CreateBookDto, UpdateBookDto } from "@models/books.model";
 
 export async function getAllBooks(): Promise<Book[]> {
 	const books = await sql<Book[]>`SELECT * FROM get_all_books()`;

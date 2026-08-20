@@ -5,7 +5,7 @@ import {
 	index,
 	show,
 	update,
-} from "../controllers/books.controller";
+} from "@controllers/books.controller";
 
 const router = Router();
 

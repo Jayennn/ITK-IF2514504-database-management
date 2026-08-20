@@ -10,7 +10,7 @@ import {
 	bookIdParamSchema,
 	createBookSchema,
 	updateBookSchema,
-} from "@models/book.model";
+} from "@models/books.model";
 
 export async function index(req: Request, res: Response) {
 	try {
@@ -20,6 +20,7 @@ export async function index(req: Request, res: Response) {
 			data: books,
 		});
 	} catch (error) {
+      console.log(error)
 		return res.status(500).json({
 			message: "Internal Server Error",
 		});

@@ -1,8 +1,10 @@
 import { Router } from "express";
-import booksRouter from "./books.route";
+import books from "./books.route";
+import auth from "./auth.route";
 
 const router = Router();
 
-router.use("/books", booksRouter);
+router.use("/books", books);
+router.use("/auth", auth);
 
 export default router;
