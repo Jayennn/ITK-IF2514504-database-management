@@ -1,0 +1,27 @@
+CREATE VIEW vw_order_details AS
+SELECT
+    orders.id,
+    customers.name,
+    books.title,
+    books.price,
+    orders.quantity,
+    (books.price * orders.quantity) AS total_price,
+    orders.order_date
+FROM orders
+INNER JOIN books
+    ON orders.book_id = books.id
+INNER JOIN customers
+    ON orders.customer_id = customers.id
+
+CREATE VIEW vw_customer_orders AS
+SELECT
+    customers.id AS customer_id,
+    customers.name AS customer_name,
+    COUNT(orders.id) AS total_orders,
+    SUM(books.price * orders.quantity) AS total_spent
+FROM customers
+LEFT JOIN orders
+    ON customers.id = orders.customer_id
+LEFT JOIN books
+    ON orders.book_id = books.id
+GROUP BY customers.id, customers.name;

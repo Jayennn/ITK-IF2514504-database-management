@@ -1,0 +1,24 @@
+services:
+  pgsql:
+    image: "postgres:17"
+    container_name: "bookstore-postgres"
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-secret}"
+    volumes:
+      - "app-pgsql:/var/lib/postgresql/data"
+      # - "./docker/mysql/create-testing-database.sql:/docker-entrypoint-initdb.d/create-testing-database.sql"
+    networks:
+      - app
+    # -- healthcheck
+
+networks:
+  app:
+    driver: bridge
+
+volumes:
+  app-pgsql:
+    driver: local
