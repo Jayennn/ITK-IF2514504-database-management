@@ -1,4 +1,8 @@
-import type { Request, Response } from "express";
+import {
+	bookIdParamSchema,
+	createBookSchema,
+	updateBookSchema,
+} from "@models/books.model";
 import {
 	createBook,
 	deleteBook,
@@ -6,11 +10,7 @@ import {
 	getBookById,
 	updateBook,
 } from "@services/books.service";
-import {
-	bookIdParamSchema,
-	createBookSchema,
-	updateBookSchema,
-} from "@models/books.model";
+import type { Request, Response } from "express";
 
 export async function index(req: Request, res: Response) {
 	try {
