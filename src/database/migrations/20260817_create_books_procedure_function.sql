@@ -50,12 +50,10 @@ BEGIN
     END IF;
 
     IF p_price < 0 THEN
-        ROLLBACK;
         RAISE EXCEPTION 'Price must be a positive value';
     END IF;
 
     IF p_stock_quantity < 0 THEN
-        ROLLBACK;
         RAISE EXCEPTION 'Stock quantity must be a positive value';
     END IF;
 

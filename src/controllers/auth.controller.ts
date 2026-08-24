@@ -55,3 +55,25 @@ export async function login(req: Request, res: Response) {
 		});
 	}
 }
+
+export async function getProfile(req: Request, res: Response) {
+	try {
+		const user = getAuthUser(req);
+
+		return res.status(200).json({
+			message: "Get profile success",
+			data: user,
+		});
+	} catch (error) {
+		return res.status(500).json({
+			message: "Internal Server Error",
+		});
+	}
+}
+
+export function getAuthUser(req: Request) {
+	if (!req.user) {
+		throw new Error("User is not authenticated");
+	}
+	return req.user;
+}

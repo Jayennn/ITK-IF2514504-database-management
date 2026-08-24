@@ -15,6 +15,18 @@ http:
       }
   auth: inherit
 
+runtime:
+  actions:
+    - type: set-variable
+      phase: after-response
+      selector:
+        expression: res.body.data.token
+        method: jsonq
+      variable:
+        name: token
+        scope: runtime
+      description: token
+
 settings:
   encodeUrl: true
   timeout: 0

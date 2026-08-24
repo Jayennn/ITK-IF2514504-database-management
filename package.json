@@ -1,19 +1,23 @@
 {
-	"name": "itk-if2514504-database-management",
-	"module": "index.ts",
-	"type": "module",
-	"private": true,
-	"devDependencies": {
-		"@biomejs/biome": "2.5.9",
-		"@types/bun": "latest",
-		"@types/express": "^5.0.6"
-	},
-	"peerDependencies": {
-		"typescript": "^5"
-	},
-	"dependencies": {
-		"express": "^5.2.1",
-		"jose": "^6.2.10",
-		"zod": "^4.4.3"
-	}
+   "name": "itk-if2514504-database-management",
+   "module": "index.ts",
+   "type": "module",
+   "private": true,
+   "scripts": {
+      "dev": "bun --hot run src/app.ts",
+      "migrate": "bun run src/database/migrate.ts"
+   },
+   "devDependencies": {
+      "@biomejs/biome": "2.5.9",
+      "@types/bun": "latest",
+      "@types/express": "^5.0.6"
+   },
+   "peerDependencies": {
+      "typescript": "^5"
+   },
+   "dependencies": {
+      "express": "^5.2.1",
+      "jose": "^6.2.10",
+      "zod": "^4.4.3"
+   }
 }
