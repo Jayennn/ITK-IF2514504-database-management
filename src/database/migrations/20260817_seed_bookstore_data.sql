@@ -11,6 +11,12 @@ VALUES
    ('Deep Learning', 'Ian Goodfellow', 230000, 5),
    ('Python Crash Course', 'Eric Matthes', 110000, 18);
 
+INSERT INTO users (email, password, role)
+VALUES
+    ('admin@example.com', '$2b$04$S7gPEQXARQ4IeQWFcXHBpODQIZVj3sS0Yt80lel0jbfcLs3EfIzHi', 'admin'),
+    ('anton@example.com', '$2b$04$S7gPEQXARQ4IeQWFcXHBpODQIZVj3sS0Yt80lel0jbfcLs3EfIzHi', 'customer')
+ON CONFLICT (email) DO NOTHING;
+
 -- INSERT INTO customers (name, signup_date) VALUES
 -- ('Andi Pratama', '2026-01-10'),
 -- ('Budi Santoso', '2026-01-15'),
