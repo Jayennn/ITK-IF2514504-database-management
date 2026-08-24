@@ -1,14 +1,12 @@
 info:
-  name: profile
+  name: Get Order Details
   type: http
-  seq: 4
+  seq: 1
 
 http:
   method: GET
-  url: "{{baseUrl}}/auth/profile"
-  auth:
-    type: bearer
-    token: "{{token}}"
+  url: "{{baseUrl}}/orders/2"
+  auth: inherit
 
 settings:
   encodeUrl: true

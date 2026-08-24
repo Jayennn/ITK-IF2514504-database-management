@@ -20,6 +20,3 @@ BEGIN
     RETURN COALESCE(total_revenue, 0)
 END;
 $$;
-
-CREATE FUNCTION 
-

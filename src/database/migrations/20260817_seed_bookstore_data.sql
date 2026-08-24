@@ -17,34 +17,14 @@ VALUES
     ('anton@example.com', '$2b$04$S7gPEQXARQ4IeQWFcXHBpODQIZVj3sS0Yt80lel0jbfcLs3EfIzHi', 'customer')
 ON CONFLICT (email) DO NOTHING;
 
--- INSERT INTO customers (name, signup_date) VALUES
--- ('Andi Pratama', '2026-01-10'),
--- ('Budi Santoso', '2026-01-15'),
--- ('Citra Lestari', '2026-02-01'),
--- ('Dewi Anggraini', '2026-02-12'),
--- ('Eko Wijaya', '2026-03-05');
+INSERT INTO orders (user_id, order_date, created_at, updated_at)
+VALUES
+    (2, '2026-01-15', NOW(), NOW()),
+    (2, '2026-02-10', NOW(), NOW());
 
--- INSERT INTO orders (customer_id, book_id, order_date, quantity) VALUES
--- (1, 3, '2025-01-15', 2),
--- (2, 1, '2025-02-08', 1),
--- (3, 5, '2025-03-21', 3),
--- (4, 2, '2025-04-12', 1),
--- (5, 4, '2025-05-27', 2),
-
--- (1, 5, '2025-07-06', 1),
--- (2, 3, '2025-08-19', 2),
--- (3, 1, '2025-10-03', 1),
--- (4, 4, '2025-11-14', 3),
--- (5, 2, '2025-12-22', 2),
-
--- (2, 5, '2026-01-09', 1),
--- (3, 4, '2026-02-17', 2),
--- (1, 2, '2026-04-05', 3),
--- (5, 3, '2026-05-18', 1),
--- (4, 1, '2026-06-24', 2),
-
--- (3, 5, '2026-07-11', 1),
--- (1, 4, '2026-08-02', 2),
--- (2, 2, '2026-09-16', 1),
--- (5, 1, '2026-10-28', 3),
--- (4, 3, '2026-12-07', 2);    
+INSERT INTO order_details (order_id, book_id, quantity, price, created_at, updated_at)
+VALUES
+    (1, 1, 2, 120000, NOW(), NOW()),
+    (1, 3, 1, 150000, NOW(), NOW()),
+    (2, 2, 1, 135000, NOW(), NOW()),
+    (2, 5, 2, 180000, NOW(), NOW());
