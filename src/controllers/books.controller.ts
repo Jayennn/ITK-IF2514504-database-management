@@ -20,7 +20,6 @@ export async function index(req: Request, res: Response) {
 			data: books,
 		});
 	} catch (error) {
-      console.log(error)
 		return res.status(500).json({
 			message: "Internal Server Error",
 		});
@@ -103,7 +102,6 @@ export async function update(req: Request, res: Response) {
 
 		if (!resultBody.success) {
 			return res.status(400).json({
-				success: false,
 				message: "Validation failed",
 				errors: resultBody.error.flatten().fieldErrors,
 			});

@@ -23,6 +23,10 @@ export const userSchema = z.object({
 	updated_at: z.date().nullable(),
 });
 
+export const publicUserSchema = userSchema.omit({
+	password: true,
+});
+
 export const createUserSchema = userSchema.omit({
 	id: true,
 	created_at: true,
@@ -45,6 +49,7 @@ export const userIdParamSchema = z.object({
 });
 
 export type User = z.infer<typeof userSchema>;
+export type PublicUser = z.infer<typeof publicUserSchema>;
 export type CreateUserDto = z.infer<typeof createUserSchema>;
 export type UpdateUserDto = z.infer<typeof updateUserSchema>;
 export type UserIdParams = z.infer<typeof userIdParamSchema>;
