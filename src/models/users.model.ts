@@ -6,11 +6,12 @@ export const userSchema = z.object({
 		.int("User ID must be an integer")
 		.positive("User ID must be greater than 0"),
 
-	username: z
-		.string("Username is required")
+	email: z
+		.string("Email is required")
 		.trim()
-		.min(1, "Username cannot be empty")
-		.max(50, "Username maximum length is 50 characters"),
+		.email("Invalid email address")
+		.min(1, "Email cannot be empty")
+		.max(255, "Email maximum length is 255 characters"),
 
 	password: z
 		.string("Password is required")

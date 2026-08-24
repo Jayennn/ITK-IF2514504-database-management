@@ -1,16 +1,37 @@
 CREATE OR REPLACE PROCEDURE register_user(
-    p_username VARCHAR,
+    p_email VARCHAR,
     p_password VARCHAR
 )
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    IF p_username IS NULL OR p_password IS NULL THEN
+    IF p_email IS NULL OR p_password IS NULL THEN
         RAISE EXCEPTION 'Required parameters must not be NULL';
     END IF;
 
-    INSERT INTO users (username, password, role)
-    VALUES (p_username, p_password, 'customer');
+    INSERT INTO users (email, password, role)
+    VALUES (p_email, p_password, 'customer');
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION get_user_with_password_by_email(
+    p_email VARCHAR
+)
+RETURNS TABLE (id INT, email VARCHAR, password VARCHAR, role user_role, created_at TIMESTAMP, updated_at TIMESTAMP)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+        SELECT
+            users.id,
+            users.email,
+            users.password,
+            users.role,
+            users.created_at,
+            users.updated_at
+        FROM users
+        WHERE users.email = p_email
+        LIMIT 1;
 END;
 $$;
 

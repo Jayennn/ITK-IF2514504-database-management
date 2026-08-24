@@ -13,10 +13,10 @@ export async function register(req: Request, res: Response) {
 			});
 		}
 
-		const { username, password, confirmPassword } = result.data;
+		const { email, password, confirmPassword } = result.data;
 
 		const user = await registerUser({
-			username,
+			email,
 			password,
 			confirmPassword,
 		});

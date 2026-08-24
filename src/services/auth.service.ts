@@ -5,10 +5,10 @@ import { sql } from "src/database/db";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
-export async function generateToken(userId: number, username: string) {
+export async function generateToken(userId: number, email: string) {
 	return await new SignJWT({
 		userId,
-		username,
+		email,
 	})
 		.setProtectedHeader({ alg: "HS256" })
 		.setIssuedAt()
@@ -25,34 +25,33 @@ export async function registerUser(data: RegisterDto): Promise<void> {
 		}),
 	};
 
-	await sql`CALL register_user(${formData.username}, ${formData.password})`;
+	await sql`CALL register_user(${formData.email}, ${formData.password})`;
 }
 
 export async function loginUser(data: LoginDto): Promise<LoginResponse> {
 	const [user] = await sql<User[]>`
-			SELECT * FROM get_user_with_password_by_username(${data.username})
+			SELECT * FROM get_user_with_password_by_email(${data.email})
 		`;
 
 	if (!user) {
-		throw new Error("Invalid username or password!");
+		throw new Error("Invalid email or password!");
 	}
 
 	const isValid = await Bun.password.verify(data.password, user.password);
 
 	if (!isValid) {
-		throw new Error("Invalid username or password!");
+		throw new Error("Invalid email or password!");
 	}
 
 	const { password: _, ...publicUser } = user;
 
-	const token = await generateToken(user.id, user.username);
+	const token = await generateToken(user.id, user.email);
 
 	return {
 		user: publicUser,
 		token,
 	};
 }
-
 
 // export function getAuthUser(req: Request) {
 // 	if (!req.user) {
