@@ -1,23 +1,27 @@
 info:
   name: Update Book
   type: http
-  seq: 3
+  seq: 4
 
 http:
   method: PUT
-  url: http://localhost:3000/api/v1/books/9
+  url: "{{baseUrl}}/books/:bookId"
+  params:
+    - name: bookId
+      value: "9"
+      type: path
   body:
     type: json
     data: |-
       {
       //   "title": "Calculus",
-        "author": "Albert Einstein"
+      //   "author": "Albert Einstein"
       //   "price": 105000,
-      //   "stock_quantity": 20
+        "stock_quantity": 2
       }
   auth:
     type: bearer
-    token: "{{token_admin}}"
+    token: "{{token}}"
 
 settings:
   encodeUrl: true

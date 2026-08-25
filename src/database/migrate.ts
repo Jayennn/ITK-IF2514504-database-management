@@ -6,6 +6,7 @@ const migrationFiles = [
 	"./src/database/migrations/20260817_create_books_procedure_function.sql",
 	"./src/database/migrations/20260819_create_users_procedure_function.sql",
 	"./src/database/migrations/20260824_create_orders_procedure_function.sql",
+	"./src/database/migrations/20260825_create_bookstore_triggers.sql",
 ];
 
 async function migrate() {

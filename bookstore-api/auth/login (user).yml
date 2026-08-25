@@ -5,14 +5,19 @@ info:
 
 http:
   method: POST
-  url: http://localhost:3000/api/v1/auth/login
+  url: "{{baseUrl}}/auth/login"
   body:
-    type: json
-    data: |-
-      {
-        "email": "anton@example.com",
-        "password": "12345678"
-      }
+    type: form-urlencoded
+    data:
+      - name: email
+        value: admin@example.com
+        description: admin
+        disabled: true
+      - name: email
+        value: budi@example.com
+        description: customer
+      - name: password
+        value: "12345678"
   auth: inherit
 
 runtime:
@@ -26,6 +31,14 @@ runtime:
         name: token
         scope: runtime
       description: token
+    - type: set-variable
+      phase: after-response
+      selector:
+        expression: res.body.data.user.id
+        method: jsonq
+      variable:
+        name: userId
+        scope: runtime
 
 settings:
   encodeUrl: true

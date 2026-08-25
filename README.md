@@ -41,9 +41,10 @@ bun run check
   - [x] `PUT /:id` – Update book (Admin only)
   - [x] `DELETE /:id` – Delete book (Admin only)
 - [ ] **Orders Module** (`/api/v1/orders`)
-  - [ ] `POST /` – Place order / atomic checkout
-  - [ ] `GET /me` – Get customer order history
-  - [ ] `GET /` – Get all orders (Admin only)
+  - [x] `POST /` – Place order / atomic checkout
+  - [x] `GET /me` – Get customer order history
+  - [x] `GET /` – Get all orders (Admin only)
+  - [x] `GET /:id` - Get all detail order
 - [ ] **Reports & Analytics Module** (`/api/v1/reports`)
   - [ ] `GET /revenue` – Monthly revenue analytics
   - [ ] `GET /top-selling` – Top selling books report

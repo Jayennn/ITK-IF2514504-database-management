@@ -1,13 +1,14 @@
-import { index, show } from "@controllers/orders.controller";
+import { checkoutOrder, index, myOrders, show } from "@controllers/orders.controller";
+import { authenticate } from "@middlewares/auth.middleware";
+import { authorize } from "@middlewares/rbac.middleware";
 import { Router } from "express";
 
 const router = Router();
 
-// admin
-router.get("/", index);
-router.get("/:id", show);
+router.get("/me", authenticate, authorize("customer"), myOrders);
+router.post("/", authenticate, authorize("customer"), checkoutOrder);
 
-// user
-// router.get("/user/:userId");
+router.get("/", authenticate, authorize("admin"), index);
+router.get("/:id", authenticate, authorize("admin", "customer"), show);
 
 export default router;

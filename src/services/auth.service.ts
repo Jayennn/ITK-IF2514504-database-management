@@ -1,15 +1,13 @@
 import type { LoginDto, LoginResponse, RegisterDto } from "@models/auth.model";
 import type { User } from "@models/users.model";
+import { AppError } from "@app-types/app-error";
+import type { Request } from "express";
 import { SignJWT } from "jose";
 import { sql } from "src/database/db";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
-export async function generateToken(
-	userId: number,
-	email: string,
-	role: string,
-) {
+export async function generateToken(userId: number, email: string, role: string) {
 	return await new SignJWT({
 		userId,
 		email,
@@ -39,13 +37,13 @@ export async function loginUser(data: LoginDto): Promise<LoginResponse> {
 		`;
 
 	if (!user) {
-		throw new Error("Invalid email or password!");
+		throw new AppError("Invalid email or password", 401);
 	}
 
 	const isValid = await Bun.password.verify(data.password, user.password);
 
 	if (!isValid) {
-		throw new Error("Invalid email or password!");
+		throw new AppError("Invalid email or password", 401);
 	}
 
 	const { password: _, ...publicUser } = user;
@@ -58,10 +56,10 @@ export async function loginUser(data: LoginDto): Promise<LoginResponse> {
 	};
 }
 
-// export function getAuthUser(req: Request) {
-// 	if (!req.user) {
-// 		throw new Error("User is not authenticated");
-// 	}
+export function getAuthUser(req: Request) {
+	if (!req.user) {
+		throw new AppError("Unauthorized: User is not authenticated", 401);
+	}
 
-// 	return req.user;
-// }
+	return req.user;
+}

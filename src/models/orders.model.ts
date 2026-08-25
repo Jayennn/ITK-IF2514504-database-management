@@ -62,6 +62,7 @@ export const orderRawRowSchema = z.object({
 
 export const orderWithDetailsSchema = z.object({
 	order_id: z.number(),
+	user_id: z.number(), // needed for ownership check
 	order_date: z.union([z.string(), z.date()]),
 	email: z.string().email(),
 
@@ -77,6 +78,25 @@ export const orderWithDetailsSchema = z.object({
 	),
 });
 
+// DTO schema for POST /orders body validation
+export const createOrderItemSchema = z.object({
+	book_id: z
+		.number("Book ID is required")
+		.int("Book ID must be an integer")
+		.positive("Book ID must be greater than 0"),
+
+	quantity: z
+		.number("Quantity is required")
+		.int("Quantity must be an integer")
+		.min(1, "Quantity must be at least 1"),
+});
+
+export const createOrderSchema = z.object({
+	items: z
+		.array(createOrderItemSchema, "Items are required")
+		.min(1, "Order must contain at least one item"),
+});
+
 export const orderIdParamSchema = z.object({
 	id: z.coerce
 		.number("ID must be a number")
@@ -89,3 +109,4 @@ export type OrderDetail = z.infer<typeof orderDetailSchema>;
 export type OrderRawRow = z.infer<typeof orderRawRowSchema>;
 export type OrderWithDetails = z.infer<typeof orderWithDetailsSchema>;
 export type OrderIdParams = z.infer<typeof orderIdParamSchema>;
+export type CreateOrderDto = z.infer<typeof createOrderSchema>;

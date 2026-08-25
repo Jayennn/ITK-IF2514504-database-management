@@ -1,79 +1,48 @@
 import { loginSchema, registerSchema } from "@models/auth.model";
-import { loginUser, registerUser } from "@services/auth.service";
+import { getAuthUser, loginUser, registerUser } from "@services/auth.service";
+import { AppError } from "@app-types/app-error";
 import type { Request, Response } from "express";
 
 export async function register(req: Request, res: Response) {
-	try {
-		const result = registerSchema.safeParse(req.body);
+	const result = registerSchema.safeParse(req.body);
 
-		if (!result.success) {
-			return res.status(400).json({
-				message: "Validation failed",
-				errors: result.error.flatten().fieldErrors,
-			});
-		}
-
-		const { email, password, confirmPassword } = result.data;
-
-		const user = await registerUser({
-			email,
-			password,
-			confirmPassword,
-		});
-
-		return res.status(201).json({
-			message: "Register success",
-			data: user,
-		});
-	} catch (error) {
-		return res.status(500).json({
-			message: "Internal Server Error",
-		});
+	if (!result.success) {
+		throw new AppError("Validation failed", 400);
 	}
+
+	const { email, password, confirmPassword } = result.data;
+
+	const user = await registerUser({ email, password, confirmPassword });
+
+	return res.status(201).json({
+		success: true,
+		message: "Register success",
+		data: user,
+	});
 }
 
 export async function login(req: Request, res: Response) {
-	try {
-		const result = loginSchema.safeParse(req.body);
+	const result = loginSchema.safeParse(req.body);
 
-		if (!result.success) {
-			return res.status(400).json({
-				message: "Validation failed",
-				errors: result.error.flatten().fieldErrors,
-			});
-		}
-
-		const user = await loginUser(result.data);
-
-		return res.status(200).json({
-			message: "Login success",
-			data: user,
-		});
-	} catch (error) {
-		return res.status(500).json({
-			message: "Internal Server Error",
-		});
+	if (!result.success) {
+		throw new AppError("Validation failed", 400);
 	}
+
+	const user = await loginUser(result.data);
+
+	return res.status(200).json({
+		success: true,
+		message: "Login success",
+		data: user,
+	});
 }
 
 export async function getProfile(req: Request, res: Response) {
-	try {
-		const user = getAuthUser(req);
+	const user = getAuthUser(req);
 
-		return res.status(200).json({
-			message: "Get profile success",
-			data: user,
-		});
-	} catch (error) {
-		return res.status(500).json({
-			message: "Internal Server Error",
-		});
-	}
-}
-
-export function getAuthUser(req: Request) {
-	if (!req.user) {
-		throw new Error("User is not authenticated");
-	}
-	return req.user;
+	return res.status(200).json({
+		success: true,
+		message: "Get profile success",
+		data: user,
+	});
 }

@@ -5,12 +5,12 @@ info:
 
 http:
   method: POST
-  url: http://localhost:3000/api/v1/auth/register
+  url: "{{baseUrl}}/auth/register"
   body:
     type: json
     data: |-
       {
-        "email": "anton@example.com",
+        "email": "budi@example.com",
         "password": "12345678",
         "confirmPassword": "12345678"
       }
@@ -21,3 +21,4 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true

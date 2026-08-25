@@ -1,14 +1,18 @@
 info:
   name: Delete Book
   type: http
-  seq: 4
+  seq: 5
 
 http:
   method: DELETE
-  url: http://localhost:3000/api/v1/books/9
+  url: "{{baseUrl}}/books/:bookId"
+  params:
+    - name: bookId
+      value: "11"
+      type: path
   auth:
     type: bearer
-    token: "{{token_admin}}"
+    token: "{{token}}"
 
 settings:
   encodeUrl: true

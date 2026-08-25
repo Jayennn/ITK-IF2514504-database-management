@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import express from "express";
+import { errorHandler, notFoundHandler } from "@middlewares/error.middleware";
 import routes from "./routes";
 
 const app = express();
@@ -10,13 +11,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1", routes);
 
 app.get("/", (req: Request, res: Response) => {
-	try {
-		res.status(200).json({ message: "Hello, World!" });
-	} catch (error) {
-		res.status(500).json({ message: "Internal Server Error" });
-	}
+   try {
+      res.status(200).json({ message: "Hello, World!" });
+   } catch (error) {
+      res.status(500).json({ message: "Internal Server Error" });
+   }
 });
 
+app.use(notFoundHandler);
+app.use(errorHandler);
+
 app.listen(PORT, () => {
-	console.log(`Server is running on http://localhost:${PORT}`);
+   console.log(`Server is running on http://localhost:${PORT}`);
 });

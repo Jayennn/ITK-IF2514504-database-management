@@ -1,5 +1,5 @@
 CREATE OR REPLACE FUNCTION get_all_books()
-RETURNS TABLE (book_id INT, title VARCHAR, author VARCHAR, price DECIMAL(10, 2), stock_quantity INT, created_at TIMESTAMP, update_at TIMESTAMP)
+RETURNS TABLE (book_id INT, title VARCHAR, author VARCHAR, price DECIMAL(10, 2), stock_quantity INT, created_at TIMESTAMP, updated_at TIMESTAMP)
 LANGUAGE plpgsql
 AS $$
 BEGIN
@@ -12,12 +12,13 @@ BEGIN
          books.stock_quantity,
          books.created_at,
          books.updated_at
-      FROM books;
+      FROM books
+      ORDER BY books.id ASC;
 END;
 $$;
 
 CREATE OR REPLACE FUNCTION get_book_by_id(p_id INT)
-RETURNS TABLE (book_id INT, title VARCHAR, author VARCHAR, price DECIMAL(10, 2), stock_quantity INT, created_at TIMESTAMP, update_at TIMESTAMP)
+RETURNS TABLE (book_id INT, title VARCHAR, author VARCHAR, price DECIMAL(10, 2), stock_quantity INT, created_at TIMESTAMP, updated_at TIMESTAMP)
 LANGUAGE plpgsql
 AS $$
 BEGIN

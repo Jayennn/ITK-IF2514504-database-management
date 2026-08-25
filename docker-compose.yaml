@@ -2,6 +2,7 @@ services:
   pgsql:
     image: "postgres:17"
     container_name: "bookstore-postgres"
+    restart: always
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     environment:
