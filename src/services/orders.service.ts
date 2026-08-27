@@ -1,68 +1,33 @@
-import type {
-	CreateOrderDto,
-	Order,
-	OrderRawRow,
-	OrderWithDetails,
-} from "@models/orders.model";
-import { sql } from "../database/db";
+import type { CreateOrderDto, Order, OrderWithDetails } from "@models/orders.model";
+import { ForbiddenError, NotFoundError } from "@app-types/app-error";
+import * as OrdersRepository from "@repositories/orders.repository";
 
 export async function getAllOrders(): Promise<Order[]> {
-	const orders = await sql<Order[]>`SELECT * FROM get_all_orders()`;
-	return orders;
+   return await OrdersRepository.findAllOrders();
 }
 
-export async function getOrderById(id: number): Promise<OrderWithDetails | null> {
-	const rows = await sql<OrderRawRow[]>`SELECT * FROM get_order_by_id(${id})`;
+export async function getOrderById(id: number, requestingUserId: number, requestingUserRole: string): Promise<OrderWithDetails> {
+   const order = await OrdersRepository.findOrderById(id);
 
-	if (!rows[0]) {
-		return null;
-	}
+   if (!order) {
+      throw new NotFoundError("Order not found");
+   }
 
-	const order: OrderWithDetails = {
-		order_id: rows[0].order_id,
-		user_id: rows[0].user_id,
-		order_date: rows[0].order_date,
-		email: rows[0].email,
-		items: [],
-	};
+   if (requestingUserRole === "customer" && order.user_id !== requestingUserId) {
+      throw new ForbiddenError("Forbidden: you can only view your own orders");
+   }
 
-	for (const row of rows) {
-		if (row.order_detail_id !== null) {
-			const item_total = Number(row.total_price);
-			order.items.push({
-				order_detail_id: row.order_detail_id,
-				book_id: row.book_id,
-				title: row.title,
-				quantity: row.quantity,
-				price: Number(row.price),
-				total_price: item_total,
-			});
-		}
-	}
-
-	return order;
+   return order;
 }
 
 export async function getOrdersByUserId(userId: number): Promise<Order[]> {
-	const orders = await sql<Order[]>`SELECT * FROM get_orders_by_user_id(${userId})`;
-	return orders;
+   return await OrdersRepository.findOrdersByUserId(userId);
 }
 
-export async function processOrderCheckout(
-	userId: number,
-	data: CreateOrderDto,
-): Promise<OrderWithDetails> {
-	const itemsJson = JSON.stringify(data.items);
+export async function checkoutOrder(userId: number, data: CreateOrderDto): Promise<void> {
+   await OrdersRepository.createOrderCheckout(userId, data);
+}
 
-	const [result] = await sql<[{ p_order_id: number }]>`
-		SELECT p_order_id FROM (CALL process_order_checkout(${userId}, ${itemsJson}::JSONB)) AS result
-	`;
-
-	const order = await getOrderById(result.p_order_id);
-
-	if (!order) {
-		throw new Error("Failed to retrieve order after checkout");
-	}
-
-	return order;
+export async function cancelOrder(userId: number, orderId: number): Promise<void> {
+   await OrdersRepository.cancelOrderById(userId, orderId);
 }

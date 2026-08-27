@@ -100,23 +100,20 @@ BEGIN
          orders.user_id,
          users.email,
          orders.order_date
-      ORDER BY orders.id DESC;
+      ORDER BY orders.id ASC;
 END;
 $$;
 
 CREATE OR REPLACE PROCEDURE process_order_checkout(
-    p_user_id INT,
-    p_items JSONB,
-    INOUT p_order_id INT DEFAULT NULL,
-    INOUT p_total_amount DECIMAL(10, 2) DEFAULT 0
+   p_user_id INT,
+   p_items JSONB
 )
 LANGUAGE plpgsql
 AS $$
 DECLARE
-    v_item RECORD;
-    v_book_price DECIMAL(10, 2);
-    v_current_stock INT;
-    v_book_title VARCHAR(255);
+   v_order_id INT;
+   v_item RECORD;
+   v_book RECORD;
 BEGIN
    IF p_user_id IS NULL OR p_items IS NULL OR jsonb_array_length(p_items) = 0 THEN
       RAISE EXCEPTION 'User ID and non-empty items list are required.';
@@ -126,11 +123,9 @@ BEGIN
       RAISE EXCEPTION 'User with ID % does not exist.', p_user_id;
    END IF;
 
-   INSERT INTO orders (user_id, order_date, created_at, updated_at)
-   VALUES (p_user_id, CURRENT_DATE, NOW(), NOW())
-   RETURNING orders.id INTO p_order_id;
-
-   p_total_amount := 0;
+   INSERT INTO orders (user_id, order_date)
+   VALUES (p_user_id, CURRENT_DATE)
+   RETURNING orders.id INTO v_order_id;
 
    FOR v_item IN
       SELECT
@@ -138,6 +133,7 @@ BEGIN
          (item->>'quantity')::INT AS quantity
       FROM jsonb_array_elements(p_items) AS item
    LOOP
+
       IF v_item.quantity IS NULL OR v_item.quantity <= 0 THEN
             RAISE EXCEPTION 'Invalid quantity % for book ID %.', v_item.quantity, v_item.book_id;
       END IF;
@@ -146,30 +142,54 @@ BEGIN
          books.title,
          books.price,
          books.stock_quantity
-      INTO v_book_title, v_book_price, v_current_stock
+      INTO v_book
       FROM books
       WHERE books.id = v_item.book_id
-      FOR UPDATE;
+      FOR UPDATE; -- ROW LOCKING
 
       IF NOT FOUND THEN
          RAISE EXCEPTION 'Book with ID % was not found.', v_item.book_id;
       END IF;
 
-      IF v_current_stock < v_item.quantity THEN
-         RAISE EXCEPTION 'Insufficient stock for "%" (ID: %). Requested: %, Available: %',
-               v_book_title, v_item.book_id, v_item.quantity, v_current_stock;
+      IF v_book.stock_quantity < v_item.quantity THEN
+         RAISE EXCEPTION 'Insufficient stock for "%". Requested: %, Available: %',
+               v_book.title, v_item.quantity, v_book.stock_quantity;
       END IF;
 
       UPDATE books
-      SET
-         stock_quantity = stock_quantity - v_item.quantity,
-         updated_at = NOW()
+      SET stock_quantity = stock_quantity - v_item.quantity
       WHERE id = v_item.book_id;
 
-      INSERT INTO order_details (order_id, book_id, quantity, price, created_at, updated_at)
-      VALUES (p_order_id, v_item.book_id, v_item.quantity, v_book_price, NOW(), NOW());
-
-      p_total_amount := p_total_amount + (v_book_price * v_item.quantity);
+      INSERT INTO order_details (order_id, book_id, quantity, price)
+      VALUES (v_order_id, v_item.book_id, v_item.quantity, v_book.price);
    END LOOP;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE process_order_cancel(
+    p_user_id INT,
+    p_order_id INT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    IF p_user_id IS NULL OR p_order_id IS NULL THEN
+        RAISE 'Required parameters must not be NULL';
+    END IF;
+
+    IF NOT EXISTS(SELECT 1 FROM users WHERE users.id = p_user_id) THEN
+         RAISE EXCEPTION 'User with ID % does not exist.', p_user_id;
+    END IF;
+
+    UPDATE books
+    SET stock_quantity = stock_quantity + order_details.quantity
+    FROM order_details
+    WHERE books.id = order_details.book_id AND order_details.order_id = p_order_id;
+
+    DELETE FROM order_details
+    WHERE order_details.order_id = p_order_id;
+
+    DELETE FROM orders
+    WHERE orders.id = p_order_id;
 END;
 $$;

@@ -1,41 +1,39 @@
 import type { Book, CreateBookDto, UpdateBookDto } from "@models/books.model";
-import { sql } from "../database/db";
+import { NotFoundError } from "@app-types/app-error";
+import * as BooksRepository from "@repositories/books.repository";
 
 export async function getAllBooks(): Promise<Book[]> {
-	const books = await sql<Book[]>`SELECT * FROM get_all_books()`;
-	return books;
+	return await BooksRepository.findAllBooks();
 }
 
-export async function getBookById(id: number): Promise<Book | null> {
-	const [book] = await sql<Book[]>`SELECT * FROM get_book_by_id(${id})`;
-	return book ?? null;
+export async function getBookById(id: number): Promise<Book> {
+	const book = await BooksRepository.findBookById(id);
+
+	if (!book) {
+		throw new NotFoundError("Book not found");
+	}
+
+	return book;
 }
 
 export async function createBook(data: CreateBookDto): Promise<Book> {
-	await sql`CALL create_book(${data.title}, ${data.author}, ${data.price}, ${data.stock_quantity})`;
-	const [book] = await sql`SELECT * FROM get_book_by_id(LASTVAL()::INT)`;
+	return await BooksRepository.insertBook(data);
+}
+
+export async function updateBook(id: number, data: UpdateBookDto): Promise<Book> {
+	const book = await BooksRepository.updateBookById(id, data);
+
+	if (!book) {
+		throw new NotFoundError("Book not found");
+	}
+
 	return book;
 }
 
-export async function updateBook(id: number, data: UpdateBookDto): Promise<Book | null> {
-	await sql`CALL update_book(${id}, ${data.title}, ${data.author}, ${data.price}, ${data.stock_quantity})`;
-	const [book] = await sql<Book[]>`SELECT * FROM get_book_by_id(${id})`;
+export async function deleteBook(id: number): Promise<void> {
+	const book = await BooksRepository.deleteBookById(id);
 
 	if (!book) {
-		// TODO: throw exception
-		return null;
+		throw new NotFoundError("Book not found");
 	}
-	return book;
-}
-
-export async function deleteBook(id: number): Promise<Book | null> {
-	const [book] = await sql<Book[]>`SELECT * FROM get_book_by_id(${id})`;
-
-	if (!book) {
-		// TODO: throw exception
-		return null;
-	}
-
-	await sql`CALL delete_book(${id})`;
-	return book;
 }

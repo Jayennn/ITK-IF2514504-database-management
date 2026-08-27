@@ -5,10 +5,10 @@ import { Router } from "express";
 
 const router = Router();
 
-router.get("/", index);
-router.get("/:id", show);
+router.get("/", authenticate, index);
+router.get("/:id", authenticate, show);
 
-// Admin-only endpoints
+// admin-only endpoints
 router.post("/", authenticate, authorize("admin"), create);
 router.put("/:id", authenticate, authorize("admin"), update);
 router.delete("/:id", authenticate, authorize("admin"), destroy);

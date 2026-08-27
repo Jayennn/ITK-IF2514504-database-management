@@ -31,7 +31,9 @@
 			"@models/*": ["./src/models/*"],
 			"@app-types/*": ["./src/types/*"],
 			"@middlewares/*": ["./src/middlewares/*"],
-			"@routes/*": ["./src/routes/*"]
+			"@routes/*": ["./src/routes/*"],
+			"@repositories/*": ["./src/repositories/*"],
+			"@lib/*": ["./src/lib/*"]
 		}
 	}
 }

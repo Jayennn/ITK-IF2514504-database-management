@@ -34,18 +34,24 @@ bun run check
   - [x] `POST /register` – Register new user
   - [x] `POST /login` – Login & issue JWT token
   - [x] `GET /profile` – Retrieve authenticated user profile
+  - [ ] `POST /logout` - Invalidate JWT token (optional)
+- [ ] **Users Module** (`/api/v1/users`)
+  - [ ] `GET /` – Get all users (Admin only)
+  - [ ] `GET /:id` – Get user details by ID (Admin only)
+  - [ ] `PUT /:id` – Update user details
+  - [ ] `DELETE /:id` – Delete user (Admin only)
 - [x] **Books Module** (`/api/v1/books`)
-  - [x] `GET /` – Get all books (Public)
-  - [x] `GET /:id` – Get book details by ID (Public)
+  - [x] `GET /` – Get all books
+  - [x] `GET /:id` – Get book details by ID 
   - [x] `POST /` – Create new book (Admin only)
   - [x] `PUT /:id` – Update book (Admin only)
   - [x] `DELETE /:id` – Delete book (Admin only)
-- [ ] **Orders Module** (`/api/v1/orders`)
-  - [x] `POST /` – Place order / atomic checkout
-  - [x] `GET /me` – Get customer order history
-  - [x] `GET /` – Get all orders (Admin only)
+- [x] **Orders Module** (`/api/v1/orders`)
+  - [x] `POST /` – Place order checkout
+  - [x] `GET /` – Get all orders
   - [x] `GET /:id` - Get all detail order
-- [ ] **Reports & Analytics Module** (`/api/v1/reports`)
+  - [x] `DELETE /:id` – Cancel order
+- [] **Reports & Analytics Module** (`/api/v1/reports`)
   - [ ] `GET /revenue` – Monthly revenue analytics
   - [ ] `GET /top-selling` – Top selling books report
 ---

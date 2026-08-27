@@ -10,7 +10,9 @@ http:
     - name: bookId
       value: "1"
       type: path
-  auth: inherit
+  auth:
+    type: bearer
+    token: "{{token}}"
 
 settings:
   encodeUrl: true

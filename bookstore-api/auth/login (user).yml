@@ -14,7 +14,7 @@ http:
         description: admin
         disabled: true
       - name: email
-        value: budi@example.com
+        value: anton@example.com
         description: customer
       - name: password
         value: "12345678"

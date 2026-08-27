@@ -8,7 +8,7 @@ http:
   url: "{{baseUrl}}/orders/:orderId"
   params:
     - name: orderId
-      value: "1"
+      value: "2"
       type: path
   auth:
     type: bearer

@@ -1,48 +1,46 @@
 import { loginSchema, registerSchema } from "@models/auth.model";
 import { getAuthUser, loginUser, registerUser } from "@services/auth.service";
-import { AppError } from "@app-types/app-error";
+import { ValidationError } from "@app-types/app-error";
+import { asyncHandler } from "@lib/async-handler";
 import type { Request, Response } from "express";
 
-export async function register(req: Request, res: Response) {
+export const register = asyncHandler(async (req: Request, res: Response) => {
 	const result = registerSchema.safeParse(req.body);
 
 	if (!result.success) {
-		throw new AppError("Validation failed", 400);
+		throw new ValidationError("Validation failed");
 	}
 
-	const { email, password, confirmPassword } = result.data;
+	await registerUser(result.data);
 
-	const user = await registerUser({ email, password, confirmPassword });
-
-	return res.status(201).json({
+	res.status(201).json({
 		success: true,
 		message: "Register success",
-		data: user,
 	});
-}
+});
 
-export async function login(req: Request, res: Response) {
+export const login = asyncHandler(async (req: Request, res: Response) => {
 	const result = loginSchema.safeParse(req.body);
 
 	if (!result.success) {
-		throw new AppError("Validation failed", 400);
+		throw new ValidationError("Validation failed");
 	}
 
-	const user = await loginUser(result.data);
+	const data = await loginUser(result.data);
 
-	return res.status(200).json({
+	res.status(200).json({
 		success: true,
 		message: "Login success",
-		data: user,
+		data,
 	});
-}
+});
 
-export async function getProfile(req: Request, res: Response) {
+export const getProfile = asyncHandler(async (req: Request, res: Response) => {
 	const user = getAuthUser(req);
 
-	return res.status(200).json({
+	res.status(200).json({
 		success: true,
 		message: "Get profile success",
 		data: user,
 	});
-}
+});
