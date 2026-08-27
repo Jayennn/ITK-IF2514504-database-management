@@ -12,10 +12,10 @@ http:
       - name: email
         value: admin@example.com
         description: admin
-        disabled: true
       - name: email
-        value: anton@example.com
+        value: budi@example.com
         description: customer
+        disabled: true
       - name: password
         value: "12345678"
   auth: inherit

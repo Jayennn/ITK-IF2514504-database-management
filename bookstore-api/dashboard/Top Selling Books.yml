@@ -1,11 +1,11 @@
 info:
-  name: profile
+  name: Top Selling Books
   type: http
-  seq: 3
+  seq: 2
 
 http:
   method: GET
-  url: "{{baseUrl}}/auth/profile"
+  url: "{{baseUrl}}/reports/top-selling"
   auth:
     type: bearer
     token: "{{token}}"

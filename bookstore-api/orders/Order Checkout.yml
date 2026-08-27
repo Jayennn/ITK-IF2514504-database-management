@@ -13,8 +13,8 @@ http:
         "user_id": {{userId}},
         "items": [
           {
-            "book_id": 9,
-            "quantity": 2
+            "book_id": 5,
+            "quantity": 10
           }
         ]
       }

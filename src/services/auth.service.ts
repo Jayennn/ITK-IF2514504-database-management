@@ -6,7 +6,11 @@ import { SignJWT } from "jose";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
-export async function generateToken(userId: number, email: string, role: string): Promise<string> {
+export async function generateToken(
+	userId: number,
+	email: string,
+	role: string,
+): Promise<string> {
 	return await new SignJWT({ userId, email, role })
 		.setProtectedHeader({ alg: "HS256" })
 		.setIssuedAt()

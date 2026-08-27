@@ -51,9 +51,9 @@ bun run check
   - [x] `GET /` – Get all orders
   - [x] `GET /:id` - Get all detail order
   - [x] `DELETE /:id` – Cancel order
-- [] **Reports & Analytics Module** (`/api/v1/reports`)
-  - [ ] `GET /revenue` – Monthly revenue analytics
-  - [ ] `GET /top-selling` – Top selling books report
+- [x] **Reports & Analytics Module** (`/api/v1/reports`)
+  - [x] `GET /revenue` – Monthly revenue analytics
+  - [x] `GET /top-selling` – Top selling books report
 ---
 ### Database Implementations
 #### Stored Procedures & Functions (`PL/pgSQL`)
@@ -64,13 +64,13 @@ bun run check
 - [x] `create_book` – Procedure inserting a new book with input validation
 - [x] `update_book` – Procedure updating book details with partial payload support
 - [x] `delete_book` – Procedure removing book by ID
-- [ ] `process_order_checkout` – Procedure handling atomic checkout, stock locking & updates
-- [ ] `get_customer_purchase_summary` – Function aggregating customer purchase statistics
-- [ ] `get_total_revenue_by_month` – Function calculating total revenue for a given year & month
+- [x] `process_order_checkout` – Procedure handling atomic checkout, stock locking & updates
+- [x] `get_customer_purchase_summary` – Function aggregating customer purchase statistics
+- [x] `get_total_revenue_by_month` – Function calculating total revenue for a given year & month
 #### Database Views
-- [ ] `vw_order_details` – Joined view of orders, customer names, book titles, and sub-totals
-- [ ] `vw_customer_orders` – View summarizing total orders and total spent per customer
-- [ ] `vw_top_selling_books` – View ranking books by units sold
+- [x] `vw_order_details` – Joined view of orders, customer names, book titles, and sub-totals
+- [x] `vw_customer_orders` – View summarizing total orders and total spent per customer
+- [x] `vw_top_selling_books` – View ranking books by units sold
 #### Database Indexes (B-Tree Performance Optimization)
 - [x] B-Tree Primary Key Indexes on `users(id)`, `books(id)`, `orders(id)`, `order_details(id)`
 - [x] B-Tree Unique Index on `users(email)`
@@ -82,3 +82,28 @@ bun run check
 - [x] **JWT Authentication Middleware** – Extract & verify `Bearer` tokens with `jose`
 - [x] **Role-Based Access Control (RBAC)** – Restrict endpoints (`admin` vs `customer`)
 - [x] **Input Validation** – Zod schema validation for request params and bodies
+
+## Implementation
+### SQL Programming
+- [x] Functions
+- [x] Triggers
+- [x] Stored Procedures
+- [x] Views
+- [] Role Revoke
+
+### Indexing
+- [] B-Tree
+- [] Hash
+- [] Bitmap
+- [] Unclustered Index
+- [] Clustered Index
+
+### Transaction Processing
+
+- [] Transactions
+- [] Failure and Recovery
+- [] Concurrency and Control
+
+### Extra Implementation
+- [] JSON
+

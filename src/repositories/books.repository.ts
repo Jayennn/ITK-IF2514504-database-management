@@ -16,7 +16,10 @@ export async function insertBook(data: CreateBookDto): Promise<Book> {
 	return book!;
 }
 
-export async function updateBookById(id: number, data: UpdateBookDto): Promise<Book | null> {
+export async function updateBookById(
+	id: number,
+	data: UpdateBookDto,
+): Promise<Book | null> {
 	await sql`CALL update_book(${id}, ${data.title}, ${data.author}, ${data.price}, ${data.stock_quantity})`;
 	const [book] = await sql<Book[]>`SELECT * FROM get_book_by_id(${id})`;
 	return book ?? null;
