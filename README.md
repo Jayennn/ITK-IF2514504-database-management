@@ -92,18 +92,18 @@ bun run check
 - [_] Role Revoke
 
 ### Indexing
-- [_] B-Tree
-- [_] Hash
-- [_] Bitmap
-- [_] Unclustered Index
-- [_] Clustered Index
+- [ ] B-Tree
+- [ ] Hash
+- [ ] Bitmap
+- [ ] Unclustered Index
+- [ ] Clustered Index
 
 ### Transaction Processing
 
-- [_] Transactions
-- [_] Failure and Recovery
-- [_] Concurrency and Control
+- [ ] Transactions
+- [ ] Failure and Recovery
+- [ ] Concurrency and Control
 
 ### Extra Implementation
-- [_] JSON
+- [ ] JSON
 
