@@ -89,21 +89,21 @@ bun run check
 - [x] Triggers
 - [x] Stored Procedures
 - [x] Views
-- [] Role Revoke
+- [_] Role Revoke
 
 ### Indexing
-- [] B-Tree
-- [] Hash
-- [] Bitmap
-- [] Unclustered Index
-- [] Clustered Index
+- [_] B-Tree
+- [_] Hash
+- [_] Bitmap
+- [_] Unclustered Index
+- [_] Clustered Index
 
 ### Transaction Processing
 
-- [] Transactions
-- [] Failure and Recovery
-- [] Concurrency and Control
+- [_] Transactions
+- [_] Failure and Recovery
+- [_] Concurrency and Control
 
 ### Extra Implementation
-- [] JSON
+- [_] JSON
 
