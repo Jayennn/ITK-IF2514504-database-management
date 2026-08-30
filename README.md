@@ -89,14 +89,14 @@ bun run check
 - [x] Triggers
 - [x] Stored Procedures
 - [x] Views
-- [] Role Revoke
+- [_] Role Revoke
 
 ### Indexing
-- [] B-Tree
-- [] Hash
-- [] Bitmap
-- [] Unclustered Index
-- [] Clustered Index
+- [ ] B-Tree
+- [ ] Hash
+- [ ] Bitmap
+- [ ] Unclustered Index
+- [ ] Clustered Index
 
 ### Transaction Processing
 
