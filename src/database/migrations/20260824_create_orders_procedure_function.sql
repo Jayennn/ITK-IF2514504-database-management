@@ -167,39 +167,40 @@ END;
 $$;
 
 CREATE OR REPLACE PROCEDURE process_order_cancel(
-    p_user_id INT,
-    p_order_id INT
+   p_user_id INT,
+   p_order_id INT
 )
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    IF p_user_id IS NULL OR p_order_id IS NULL THEN
-        RAISE EXCEPTION 'Required parameters must not be NULL';
-    END IF;
+   IF p_user_id IS NULL OR p_order_id IS NULL THEN
+      RAISE EXCEPTION 'Required parameters must not be NULL';
+   END IF;
 
-    IF NOT EXISTS(SELECT 1 FROM users WHERE users.id = p_user_id) THEN
-        RAISE EXCEPTION 'User with ID % does not exist.', p_user_id;
-    END IF;
+   IF NOT EXISTS(SELECT 1 FROM users WHERE users.id = p_user_id) THEN
+      RAISE EXCEPTION 'User with ID % does not exist.', p_user_id;
+   END IF;
 
-    IF NOT EXISTS(SELECT 1 FROM orders WHERE orders.id = p_order_id) THEN
-        RAISE EXCEPTION 'Order with ID % does not exist.', p_order_id;
-    END IF;
+   IF NOT EXISTS(SELECT 1 FROM orders WHERE orders.id = p_order_id) THEN
+      RAISE EXCEPTION 'Order with ID % does not exist.', p_order_id;
+   END IF;
 
-    -- Lock book rows to prevent race conditions during stock restoration
-    PERFORM 1 FROM books
-    INNER JOIN order_details ON books.id = order_details.book_id
-    WHERE order_details.order_id = p_order_id
-    FOR UPDATE OF books;
+   -- TODO: pahamin!!!
+   -- Lock book rows to prevent race conditions during stock restoration
+   PERFORM 1 FROM books
+   INNER JOIN order_details ON books.id = order_details.book_id
+   WHERE order_details.order_id = p_order_id
+   FOR UPDATE OF books;
 
-    UPDATE books
-    SET stock_quantity = books.stock_quantity + order_details.quantity
-    FROM order_details
-    WHERE books.id = order_details.book_id AND order_details.order_id = p_order_id;
+   UPDATE books
+   SET stock_quantity = books.stock_quantity + order_details.quantity
+   FROM order_details
+   WHERE books.id = order_details.book_id AND order_details.order_id = p_order_id;
 
-    DELETE FROM order_details
-    WHERE order_details.order_id = p_order_id;
+   DELETE FROM order_details
+   WHERE order_details.order_id = p_order_id;
 
-    DELETE FROM orders
-    WHERE orders.id = p_order_id;
+   DELETE FROM orders
+   WHERE orders.id = p_order_id;
 END;
 $$;

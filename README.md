@@ -100,10 +100,10 @@ bun run check
 
 ### Transaction Processing
 
-- [] Transactions
-- [] Failure and Recovery
-- [] Concurrency and Control
+- [x] Transactions
+- [x] Failure and Recovery
+- [x] Concurrency and Control
 
 ### Extra Implementation
-- [] JSON
+- [x] JSON
 

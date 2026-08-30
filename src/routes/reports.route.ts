@@ -5,6 +5,6 @@ import { Router } from "express";
 
 const router = Router();
 router.get("/revenue", authenticate, authorize("admin"), revenueReport);
-router.get("/top-selling", authenticate, authorize("admin"), topSellingBooks);
+router.get("/top-selling", authenticate, topSellingBooks);
 
 export default router;
