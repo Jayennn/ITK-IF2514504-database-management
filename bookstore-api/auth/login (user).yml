@@ -39,6 +39,7 @@ runtime:
       variable:
         name: userId
         scope: runtime
+      description: user id
 
 settings:
   encodeUrl: true

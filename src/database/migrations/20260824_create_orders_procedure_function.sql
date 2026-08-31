@@ -1,29 +1,7 @@
-CREATE OR REPLACE FUNCTION get_all_orders()
-RETURNS TABLE (order_id INT, user_id INT, email VARCHAR, order_date DATE, total_items BIGINT, total_price NUMERIC)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    RETURN QUERY
-    SELECT
-        orders.id AS order_id,
-        orders.user_id,
-        users.email,
-        orders.order_date,
-        COALESCE(SUM(order_details.quantity), 0) AS total_items,
-        COALESCE(SUM(order_details.price * order_details.quantity), 0) AS total_price
-    FROM orders
-    INNER JOIN users
-        ON orders.user_id = users.id
-    LEFT JOIN order_details
-        ON orders.id = order_details.order_id
-    GROUP BY
-        orders.id,
-        orders.user_id,
-        users.email,
-        orders.order_date
-    ORDER BY orders.id;
-END;
-$$;
+-- get_all_orders() dikonversi menjadi VIEW vw_all_orders
+-- (lihat: 20260827_create_bookstore_views.sql)
+DROP FUNCTION IF EXISTS get_all_orders();
+
 
 CREATE OR REPLACE FUNCTION get_order_by_id(
     p_order_id INT
@@ -104,6 +82,43 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION validate_user_exists(p_user_id INT)
+RETURNS VOID
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM users WHERE users.id = p_user_id) THEN
+        RAISE EXCEPTION 'User with ID % does not exist.', p_user_id;
+    END IF;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION validate_and_get_book(p_book_id INT, p_quantity INT)
+RETURNS books
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_book books;
+BEGIN
+    SELECT *
+    INTO v_book
+    FROM books
+    WHERE books.id = p_book_id
+    FOR UPDATE; -- ROW LOCKING
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Book with ID % was not found.', p_book_id;
+    END IF;
+
+    IF v_book.stock_quantity < p_quantity THEN
+        RAISE EXCEPTION 'Insufficient stock for "%". Requested: %, Available: %',
+            v_book.title, p_quantity, v_book.stock_quantity;
+    END IF;
+
+    RETURN v_book;
+END;
+$$;
+
 CREATE OR REPLACE PROCEDURE process_order_checkout(
    p_user_id INT,
    p_items JSONB
@@ -113,15 +128,13 @@ AS $$
 DECLARE
    v_order_id INT;
    v_item RECORD;
-   v_book RECORD;
+   v_book books;
 BEGIN
    IF p_user_id IS NULL OR p_items IS NULL OR jsonb_array_length(p_items) = 0 THEN
       RAISE EXCEPTION 'User ID and non-empty items list are required.';
    END IF;
 
-   IF NOT EXISTS(SELECT 1 FROM users WHERE id = p_user_id) THEN
-      RAISE EXCEPTION 'User with ID % does not exist.', p_user_id;
-   END IF;
+   PERFORM validate_user_exists(p_user_id);
 
    INSERT INTO orders (user_id, order_date)
    VALUES (p_user_id, CURRENT_DATE)
@@ -135,26 +148,10 @@ BEGIN
    LOOP
 
       IF v_item.quantity IS NULL OR v_item.quantity <= 0 THEN
-            RAISE EXCEPTION 'Invalid quantity % for book ID %.', v_item.quantity, v_item.book_id;
+         RAISE EXCEPTION 'Invalid quantity % for book ID %.', v_item.quantity, v_item.book_id;
       END IF;
 
-      SELECT
-         books.title,
-         books.price,
-         books.stock_quantity
-      INTO v_book
-      FROM books
-      WHERE books.id = v_item.book_id
-      FOR UPDATE; -- ROW LOCKING
-
-      IF NOT FOUND THEN
-         RAISE EXCEPTION 'Book with ID % was not found.', v_item.book_id;
-      END IF;
-
-      IF v_book.stock_quantity < v_item.quantity THEN
-         RAISE EXCEPTION 'Insufficient stock for "%". Requested: %, Available: %',
-               v_book.title, v_item.quantity, v_book.stock_quantity;
-      END IF;
+      v_book := validate_and_get_book(v_item.book_id, v_item.quantity);
 
       UPDATE books
       SET stock_quantity = stock_quantity - v_item.quantity
@@ -177,9 +174,7 @@ BEGIN
       RAISE EXCEPTION 'Required parameters must not be NULL';
    END IF;
 
-   IF NOT EXISTS(SELECT 1 FROM users WHERE users.id = p_user_id) THEN
-      RAISE EXCEPTION 'User with ID % does not exist.', p_user_id;
-   END IF;
+   PERFORM validate_user_exists(p_user_id);
 
    IF NOT EXISTS(SELECT 1 FROM orders WHERE orders.id = p_order_id) THEN
       RAISE EXCEPTION 'Order with ID % does not exist.', p_order_id;

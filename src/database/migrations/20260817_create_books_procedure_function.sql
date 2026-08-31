@@ -1,21 +1,7 @@
-CREATE OR REPLACE FUNCTION get_all_books()
-RETURNS TABLE (book_id INT, title VARCHAR, author VARCHAR, price DECIMAL(10, 2), stock_quantity INT, created_at TIMESTAMP, updated_at TIMESTAMP)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    RETURN QUERY
-      SELECT
-         books.id,
-         books.title,
-         books.author,
-         books.price,
-         books.stock_quantity,
-         books.created_at,
-         books.updated_at
-      FROM books
-      ORDER BY books.id ASC;
-END;
-$$;
+-- get_all_books() dikonversi menjadi VIEW vw_all_books
+-- (lihat: 20260827_create_bookstore_views.sql)
+DROP FUNCTION IF EXISTS get_all_books();
+
 
 CREATE OR REPLACE FUNCTION get_book_by_id(p_id INT)
 RETURNS TABLE (book_id INT, title VARCHAR, author VARCHAR, price DECIMAL(10, 2), stock_quantity INT, created_at TIMESTAMP, updated_at TIMESTAMP)
@@ -37,6 +23,42 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION validate_book_input_required(
+    p_price DECIMAL(10, 2),
+    p_stock_quantity INT
+)
+RETURNS VOID
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    IF p_price < 0 THEN
+        RAISE EXCEPTION 'Price must be a positive value';
+    END IF;
+
+    IF p_stock_quantity < 0 THEN
+        RAISE EXCEPTION 'Stock quantity must be a positive value';
+    END IF;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION validate_book_input_optional(
+    p_price DECIMAL(10, 2),
+    p_stock_quantity INT
+)
+RETURNS VOID
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    IF p_price IS NOT NULL AND p_price < 0 THEN
+        RAISE EXCEPTION 'Price must be a positive value';
+    END IF;
+
+    IF p_stock_quantity IS NOT NULL AND p_stock_quantity < 0 THEN
+        RAISE EXCEPTION 'Stock quantity must be a positive value';
+    END IF;
+END;
+$$;
+
 CREATE OR REPLACE PROCEDURE create_book(
     p_title VARCHAR,
     p_author VARCHAR,
@@ -50,13 +72,7 @@ BEGIN
         RAISE EXCEPTION 'Required parameters must not be NULL';
     END IF;
 
-    IF p_price < 0 THEN
-        RAISE EXCEPTION 'Price must be a positive value';
-    END IF;
-
-    IF p_stock_quantity < 0 THEN
-        RAISE EXCEPTION 'Stock quantity must be a positive value';
-    END IF;
+    PERFORM validate_book_input_required(p_price, p_stock_quantity);
 
     INSERT INTO books (title, author, price, stock_quantity)
     VALUES (p_title, p_author, p_price, p_stock_quantity);
@@ -89,13 +105,7 @@ CREATE OR REPLACE PROCEDURE update_book(
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    IF p_price IS NOT NULL AND p_price < 0 THEN
-        RAISE EXCEPTION 'Price must be a positive value';
-    END IF;
-
-    IF p_stock_quantity IS NOT NULL AND p_stock_quantity < 0 THEN
-        RAISE EXCEPTION 'Stock quantity must be a positive value';
-    END IF;
+    PERFORM validate_book_input_optional(p_price, p_stock_quantity);
 
     UPDATE books
     SET

@@ -1,11 +1,13 @@
 import z from "zod";
 
-export const orderSummaryReportSchema = z.object({
-	order_id: z.number(),
-	customer_email: z.string(),
-	order_date: z.date(),
-	total_items: z.number(),
-	total_price: z.number(),
+export const monthlyRevenueSummarySchema = z.object({
+	year: z.number(),
+	month: z.number(),
+	total_orders: z.number(),
+	unique_customers: z.number(),
+	total_items_sold: z.number(),
+	total_revenue: z.number(),
+	avg_order_value: z.number(),
 });
 
 export const topSellingBooksReportSchema = z.object({
@@ -18,5 +20,5 @@ export const topSellingBooksReportSchema = z.object({
 	total_revenue: z.number(),
 });
 
-export type OrderSummaryReport = z.infer<typeof orderSummaryReportSchema>;
+export type MonthlyRevenueSummary = z.infer<typeof monthlyRevenueSummarySchema>;
 export type TopSellingBooksReport = z.infer<typeof topSellingBooksReportSchema>;

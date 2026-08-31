@@ -2,7 +2,7 @@ import type { Book, CreateBookDto, UpdateBookDto } from "@models/books.model";
 import { sql } from "../database/db";
 
 export async function findAllBooks(): Promise<Book[]> {
-	return await sql<Book[]>`SELECT * FROM get_all_books()`;
+	return await sql<Book[]>`SELECT * FROM vw_all_books`;
 }
 
 export async function findBookById(id: number): Promise<Book | null> {

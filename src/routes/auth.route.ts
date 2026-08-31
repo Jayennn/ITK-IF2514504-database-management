@@ -7,7 +7,8 @@ const router = Router();
 router.post("/register", register);
 router.post("/login", login);
 
-// Protected endpoint
+// Protected endpoints
 router.get("/profile", authenticate, getProfile);
+// router.post("/logout", authenticate, logout);
 
 export default router;

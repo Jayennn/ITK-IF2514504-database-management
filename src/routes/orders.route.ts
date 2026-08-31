@@ -1,8 +1,8 @@
 import {
-	cancelOrderHandler,
-	checkoutOrderHandler,
-	index,
-	show,
+   cancelOrderHandler,
+   checkoutOrderHandler,
+   index,
+   show,
 } from "@controllers/orders.controller";
 import { authenticate } from "@middlewares/auth.middleware";
 import { authorize } from "@middlewares/rbac.middleware";

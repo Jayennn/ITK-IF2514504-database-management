@@ -29,6 +29,7 @@ BEFORE INSERT ON order_details
 FOR EACH ROW
 EXECUTE FUNCTION set_timestamps_on_new_data();
 
+--- separator
 
 CREATE OR REPLACE FUNCTION set_updated_at_on_updated_data()
 RETURNS TRIGGER
@@ -60,6 +61,7 @@ BEFORE UPDATE ON order_details
 FOR EACH ROW
 EXECUTE FUNCTION set_updated_at_on_updated_data();
 
+--- separator
 
 CREATE OR REPLACE FUNCTION validate_stock_change()
 RETURNS TRIGGER
@@ -77,3 +79,4 @@ CREATE OR REPLACE TRIGGER trigger_books_before_update
 BEFORE UPDATE ON books
 FOR EACH ROW
 EXECUTE FUNCTION validate_stock_change();
+

@@ -1,8 +1,8 @@
-import type { OrderSummaryReport, TopSellingBooksReport } from "@models/reports.model";
+import type { MonthlyRevenueSummary, TopSellingBooksReport } from "@models/reports.model";
 import { sql } from "../database/db";
 
-export async function getOrderSummary(): Promise<OrderSummaryReport[]> {
-	return await sql<OrderSummaryReport[]>`SELECT * FROM vw_order_summary`;
+export async function getMonthlyRevenueSummary(): Promise<MonthlyRevenueSummary[]> {
+	return await sql<MonthlyRevenueSummary[]>`SELECT * FROM vw_monthly_revenue_summary`;
 }
 
 export async function getTopSellingBooks(): Promise<TopSellingBooksReport[]> {
